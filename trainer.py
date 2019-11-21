@@ -2,6 +2,7 @@ import torch.optim as optim
 
 from torch import nn
 import torch
+import filehandler
 
 class trainer:
     def __init__(self, net):
@@ -38,4 +39,11 @@ class trainer:
 
 
             torch.save(self.net.state_dict(), self.PATH)
+
+
+
+#Starte med å importere dataen
+data = filehandler.load_data()
+
+
 

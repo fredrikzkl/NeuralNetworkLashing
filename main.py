@@ -1,6 +1,7 @@
 import numpy as np
 import pandas as pd
 import matchData
+import filehandler
 
 from nettverk import Nettverk
 
@@ -48,9 +49,6 @@ for index, row in matches.iterrows():
     temp = matchData.MatchData(radiantWin=row['radiant_win'], heroArray=temp_heroArray)
     data.append(temp)
 
+print("Completed processing til data set!")
 
-t = trainer(net=model)
-t.trainNetwork(2,data)
-
-
-
+filehandler.save_data(data=data)
