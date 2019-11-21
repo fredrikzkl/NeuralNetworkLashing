@@ -1,20 +1,32 @@
 import numpy as np
 import pandas as pd
+import matchData
+
+from nettverk import Nettverk
+
+import torch.optim as optim
+
+from trainer import trainer
+
 
 def getHeroesInMatch(id):
     return players.loc[players['match_id'] == id]
 
-def getHeroesInTeam(heroes, slots):
-    return heroes.loc[(heroes['player_slot'] >= slots[0]) & (heroes['player_slot'] <= slots[1])]
+def isRadiant(slot):
+    return (slot >= radiantSlots[0]) & (slot <= radiantSlots[1])
 
-def generateInputArray(playersInTeam):
+
+def generateInputArray(players):
     array = np.empty(len(heroes))
     array.fill(0)
 
-    for i in range(len(playersInTeam)):
-        hero = players.loc[i]['hero_id']
-        array[hero - 1] = 1
-
+    for index, row in players.iterrows():
+        hero = row['hero_id']
+        slot = row['player_slot']
+        if isRadiant(slot):
+            array[hero - 1] = 1
+        else:
+            array[hero - 1] = -1
     return array
 
 
@@ -23,20 +35,22 @@ direSlots = [128,132]
 radiantSlots = [0,4]
 path = "../dota_dataset/"
 #Fetch relevant data
-matches = pd.read_csv(path + "match.csv")
+matches = pd.read_csv(path + "match.csv").head(100)
 players = pd.read_csv(path + "players.csv")
 heroes = pd.read_csv(path + "hero_names.csv")['hero_id'].values
 
+model = Nettverk()
+data = []
+
+for index, row in matches.iterrows():
+    heroesInMatch = getHeroesInMatch(row['match_id'])
+    temp_heroArray = generateInputArray(heroesInMatch)
+    temp = matchData.MatchData(radiantWin=row['radiant_win'], heroArray=temp_heroArray)
+    data.append(temp)
 
 
-playersInMatch = getHeroesInMatch(0)
-
-
-radiantArray = generateInputArray(getHeroesInTeam(playersInMatch, radiantSlots))
-direArray = generateInputArray(getHeroesInTeam(playersInMatch, direSlots))
-
-print(radiantArray)
-print(direArray)
+t = trainer(net=model)
+t.trainNetwork(2,data)
 
 
 
