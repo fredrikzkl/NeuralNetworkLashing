@@ -16,3 +16,13 @@ def save_data(data):
         print("Data dumped to file...")
 
 
+def load_into_matrix():
+    data = load_data()
+    wins = []
+    heroes = []
+
+    for i in range(len(data)):
+        wins.append(data[i].radiantWin)
+        heroes.append(data[i].heroArray)
+
+    return wins, heroes
