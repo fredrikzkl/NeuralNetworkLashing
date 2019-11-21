@@ -40,7 +40,6 @@ matches = pd.read_csv(path + "match.csv").head(100)
 players = pd.read_csv(path + "players.csv")
 heroes = pd.read_csv(path + "hero_names.csv")['hero_id'].values
 
-model = Nettverk()
 data = []
 
 for index, row in matches.iterrows():
