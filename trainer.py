@@ -101,13 +101,20 @@ allDataHeroes = np.array(allDataHeroes)
 trainSet = MatchDataset(allDataWins[0:10000],allDataHeroes[0:10000])
 train_loader = DataLoader(dataset=trainSet, batch_size=32, shuffle=True, num_workers=0)
 
-print("--- TRAINING COMPLETE ---")
 
 validationSet = MatchDataset(allDataWins[10000:11000],allDataHeroes[10000:11000])
 validation_loader = DataLoader(dataset=validationSet, batch_size=1000, shuffle=True, num_workers=0)
 
 
 model = Nettverk()
+try:
+    model.to('cuda')
+    print("Cuda enabeled. Let's go!")
+except:
+    print("CUDA not compatible with GPU - training regular")
+
 t = trainer(model)
 
 t.trainNetwork(epoch=1000, train_loader=train_loader, validation_loader=validation_loader)
+print("--- TRAINING COMPLETE ---")
+
